@@ -57,17 +57,29 @@ class MenuController extends Controller
      * @param \App\Http\Requests\MenuStoreRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(MenuStoreRequest $request)
+    public function store(Request $request)
     {
+        //return $request->all();
         $this->authorize('create', Menu::class);
+        
+       
+       
+       $input = $request->except('food_new', 'quantity');
+       $menu = Menu::create($input);
+       $syncData = array();
 
-        $validated = $request->validated();
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('public');
-        }
-
-        $menu = Menu::create($validated);
-
+       $arr1 = $request->food_new;
+        $arr2 = $request->quantity;
+        
+        $com= array_combine($arr1, $arr2);
+       
+       foreach($com as $i=>$value){
+               $syncData[$i] = array('quantity'=>$value);
+           }
+        
+      $menu->foods()->sync($syncData);
+       
+        
         return redirect()
             ->route('menus.edit', $menu)
             ->withSuccess(__('crud.common.created'));

@@ -10,24 +10,24 @@
             required
         ></x-inputs.text>
     </x-inputs.group>
-
-    <x-inputs.group class="col-sm-12">
+    
+  <!--   <x-inputs.group class="col-sm-12">
         <x-inputs.datetime
             name="menu_starts"
             label="Menu Starts"
             value="{{ old('menu_starts', ($editing ? optional($menu->menu_starts)->format('Y-m-d\TH:i:s') : '')) }}"
             max="255"
         ></x-inputs.datetime>
-    </x-inputs.group>
-
-    <x-inputs.group class="col-sm-12">
+    </x-inputs.group> -->
+    
+  <!--   <x-inputs.group class="col-sm-12">
         <x-inputs.number
             name="validity"
             label="Validity"
             value="{{ old('validity', ($editing ? $menu->validity : '')) }}"
             max="255"
         ></x-inputs.number>
-    </x-inputs.group>
+    </x-inputs.group> -->
 
     <x-inputs.group class="col-sm-12">
         <div
@@ -90,7 +90,7 @@
         </x-inputs.select>
     </x-inputs.group>
 
-    <x-inputs.group class="col-sm-12">
+  <!--   <x-inputs.group class="col-sm-12">
         <x-inputs.select name="food_id" label="Food" required>
             @php $selected = old('food_id', ($editing ? $menu->food_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Food</option>
@@ -98,7 +98,7 @@
             <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
             @endforeach
         </x-inputs.select>
-    </x-inputs.group>
+    </x-inputs.group> -->
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="company_id" label="Company" required>

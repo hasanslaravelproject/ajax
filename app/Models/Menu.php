@@ -23,7 +23,7 @@ class Menu extends Model
     {
         return $this->hasMany(Order::class);
     }
-
+    
     public function menuTypes()
     {
         return $this->belongsTo(MenuTypes::class);
@@ -41,9 +41,9 @@ class Menu extends Model
 
     public function foods()
     {
-        return $this->belongsToMany(Food::class, 'food_menus', 'menu_id', 'food_id');
+        return $this->belongsToMany(Food::class, 'food_menu', 'menu_id', 'food_id')->withPivot('quantity');
     }
-
+   
     public function company()
     {
         return $this->belongsTo(Company::class);

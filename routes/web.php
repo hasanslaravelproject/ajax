@@ -167,7 +167,10 @@ Route::prefix('/')
             MenuTypesController::class,
             'destroy',
         ])->name('all-menu-types.destroy');
-
+        
+        Route::get('/quickorder', [OrderController::class, 'quickorder']);
+        Route::post('/quickorder', [OrderController::class, 'saveorder'])->name('saveorder');
+        
         Route::get('orders', [OrderController::class, 'index'])->name(
             'orders.index'
         );
@@ -299,6 +302,9 @@ Route::prefix('/')
         Route::get('stocks/create', [StockController::class, 'create'])->name(
             'stocks.create'
         );
+        
+        Route::get('/guestdiv', [StockController::class, 'guestdiv']);
+        
         Route::get('stocks/{stock}', [StockController::class, 'show'])->name(
             'stocks.show'
         );

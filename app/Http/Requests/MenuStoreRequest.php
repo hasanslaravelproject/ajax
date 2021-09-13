@@ -25,7 +25,7 @@ class MenuStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'max:255', 'string'],
-            'menu_starts' => ['nullable', 'date'],
+           /*  'menu_starts' => ['nullable', 'date'], */
             'validity' => ['nullable', 'numeric'],
             'image' => ['nullable', 'image', 'max:1024'],
             'menu_types_id' => ['required', 'exists:menu_types,id'],

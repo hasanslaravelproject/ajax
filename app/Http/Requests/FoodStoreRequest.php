@@ -28,6 +28,7 @@ class FoodStoreRequest extends FormRequest
             'image' => ['nullable', 'image', 'max:1024'],
             'food_type_id' => ['required', 'exists:food_types,id'],
             'div_no' => ['required'],
+            'company_id' => ['required'],
         ];
         
         

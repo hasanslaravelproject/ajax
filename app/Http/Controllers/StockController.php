@@ -14,6 +14,13 @@ use App\Http\Requests\StockUpdateRequest;
 
 class StockController extends Controller
 {
+    function guestdiv(){
+        $foods = Food::all();
+        $orders = Order::all();
+
+        return view('guestdiv', compact('foods', 'orders'));
+    }
+
     /**
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
@@ -37,7 +44,7 @@ class StockController extends Controller
      */
     public function create(Request $request)
     {
-       // return Menu::find(1)->food()->get();
+       //return Menu::find(41)->orders()->get();
         $this->authorize('create', Stock::class);
         if($request->get('menu_id')){
            $orders = Menu::find($request->get('menu_id'))->orders()->orderBy('delivery_date', 'asc')->get();
@@ -45,7 +52,7 @@ class StockController extends Controller
             $orders = Order::all();
         }
         $foods = Food::all();
-
+        
         $customer = Customer::all();
         $companies = Company::pluck('name', 'id');
         $menus = Menu::all();

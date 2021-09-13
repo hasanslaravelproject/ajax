@@ -11,7 +11,7 @@
                 @lang('crud.orders.create_title')
             </h4>
            
-            <form action="{{url('show-company-orders')}}" method="post">
+            <!--<form action="{{url('show-company-orders')}}" method="post">
                 @csrf
                 <select name="company_id_search" id="" class="form-control" required>
                     <option value="" selected="" disabled="">Select Company </option>
@@ -20,7 +20,7 @@
                       @endforeach
                 </select>
                 <button type="submit" name="submit" class="btn btn-success">Search</button>
-            </form>
+            </form>  -->
             <x-form
                 method="POST"
                 action="{{ route('orders.store') }}"
@@ -35,7 +35,7 @@
                         @lang('crud.common.back')
                     </a>
                    
-                    <button type="button" class="btn btn-primary float-right" id="order_ok">
+                    <button type="submit" class="btn btn-primary float-right" id="order_ok">
                         <i class="icon ion-md-save"></i>
                         @lang('crud.common.create')
                     </button>

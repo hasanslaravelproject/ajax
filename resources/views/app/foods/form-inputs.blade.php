@@ -21,6 +21,19 @@
             ></x-inputs.partials.label
             ><br />
 
+         
+        
+        <br>
+        <x-inputs.group class="col-sm-12">
+        <x-inputs.select name="food_type_id" label="Food Type" required>
+            @php $selected = old('food_type_id', ($editing ? $food->food_type_id : '')) @endphp
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Food Type</option>
+            @foreach($foodTypes as $value => $label)
+            <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
+            @endforeach
+        </x-inputs.select>
+    </x-inputs.group>
+            
             <!-- Show the image -->
             <template x-if="imageUrl">
                 <img
@@ -53,11 +66,10 @@
     </x-inputs.group>
     
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="food_type_id" label="Food Type" required>
-            @php $selected = old('food_type_id', ($editing ? $food->food_type_id : '')) @endphp
+        <x-inputs.select name="company_id" label="Company Id" required>
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Food Type</option>
-            @foreach($foodTypes as $value => $label)
-            <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
+            @foreach($companies as $value => $label)
+            <option value="{{ $label->id }}" >{{ $label->name }}</option>
             @endforeach
         </x-inputs.select>
     </x-inputs.group>

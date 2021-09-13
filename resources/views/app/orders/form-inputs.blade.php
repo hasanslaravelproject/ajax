@@ -22,7 +22,7 @@
             required
         ></x-inputs.number>
     </x-inputs.group>
-
+    
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="customer_id" label="Customer" required>
             @php $selected = old('customer_id', ($editing ? $order->customer_id : '')) @endphp

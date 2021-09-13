@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Food;
+use App\Models\Company;
 use App\Models\FoodType;
 use Illuminate\Http\Request;
 use App\Http\Requests\FoodStoreRequest;
@@ -35,10 +36,10 @@ class FoodController extends Controller
     public function create(Request $request)
     {
         $this->authorize('create', Food::class);
-
+        
         $foodTypes = FoodType::pluck('name', 'id');
-
-        return view('app.foods.create', compact('foodTypes'));
+        $companies = Company::all();
+        return view('app.foods.create', compact('foodTypes', 'companies'));
     }
 
     /**
@@ -47,18 +48,19 @@ class FoodController extends Controller
      */
     public function store(FoodStoreRequest $request)
     {
+        //return $request->all();
         $this->authorize('create', Food::class);
-
+        //company_id company_id
         $validated = $request->validated();
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('public');
         }
-
+        //return $validated;
         $food = Food::create($validated);
        
-
+        
         return redirect()
-            ->route('foods.edit', $food)
+            ->back()
             ->withSuccess(__('crud.common.created'));
     }
 
@@ -82,10 +84,10 @@ class FoodController extends Controller
     public function edit(Request $request, Food $food)
     {
         $this->authorize('update', $food);
-
+        $companies =  Company::all();
         $foodTypes = FoodType::pluck('name', 'id');
-
-        return view('app.foods.edit', compact('food', 'foodTypes'));
+        
+        return view('app.foods.edit', compact('companies','food', 'foodTypes'));
     }
 
     /**
@@ -110,7 +112,7 @@ class FoodController extends Controller
         $food->update($validated);
 
         return redirect()
-            ->route('foods.edit', $food)
+            ->back()
             ->withSuccess(__('crud.common.saved'));
     }
 

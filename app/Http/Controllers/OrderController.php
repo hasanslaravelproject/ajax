@@ -223,7 +223,7 @@ class OrderController extends Controller
         return view('showallcustomerorder', compact('orders', 'odersdate'));
 
     }
-
+    
     public function printsticker()
     {
         $customerId = 11; //this is cusid
@@ -240,5 +240,36 @@ class OrderController extends Controller
         
         $orders = Order::all();
         return view('showcompanynamewithitem', compact('orders'));
+    }
+
+    public function quickorder()
+    {
+        $customers = Customer::all();
+        $menus = Menu::all();
+         $last_order = Order::latest()->first();
+        return view('quickorder', compact('customers','menus', 'last_order'));
+    }
+
+
+    public function saveorder(Request $request)
+    {
+        $cusid = $request->only('customer_id');
+
+        $arr1 = $request->customer_id;
+        $arr2 = $request->quantity;
+        
+       $com= array_combine($arr1, $arr2);
+        
+        foreach($com as $key=>$val){
+            Order::create([
+                'delivery_date'=> $request->delivery_date,
+                'customer_id'=>$key,
+                'order_quantity'=>$val,
+                'menu_id'=>$request->menu_id
+            ]);
+        }
+
+        return 'ok';
+    
     }
 }

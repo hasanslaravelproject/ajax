@@ -1,39 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">
-                <a href="{{ route('stocks.index') }}" class="mr-4"
-                    ><i class="icon ion-md-arrow-back"></i
-                ></a>
-                @lang('crud.stocks.create_title')
-            </h4>
 
-            <x-form
-                method="POST"
-                action="{{ route('stocks.store') }}"
-                class="mt-4"
-            >
-                @include('app.stocks.form-inputs')
-
-                <div class="mt-4">
-                    <a href="{{ route('stocks.index') }}" class="btn btn-light">
-                        <i class="icon ion-md-return-left text-primary"></i>
-                        @lang('crud.common.back')
-                    </a>
-
-                    <button type="button" class="btn btn-primary float-right" id="order_ok">
-                        <i class="icon ion-md-save"></i>
-                        @lang('crud.common.create')
-                    </button>
-                </div>
-            </x-form>
-        </div>
-    </div>
-</div>
-<br> <br> <br> <br>    
 <!-- new html code here start -->
 <div class="container">
         <div class="row clearfix">
@@ -60,6 +28,7 @@
                         <tr id="food_table">
                             <th class="text-center"> # </th>
                             <th class="text-center"> Customer </th>
+                            <th class="text-center"> Total Customer </th>
                             @foreach ($foods as $food)
                             <th class="text-center" id="food_list"> {{ $food->name }} </th>
                             @endforeach
@@ -67,78 +36,47 @@
                         </tr>
                     </thead>
                     <tbody>
+                      
                         @foreach ($orders as $order)
                         <tr id='possition-0'>
-                            <td>1</td>
+                            <td>{{$order->id}}</td>
                             <td>
-                                <select name="customer_name[]" id="">
+                                <select name="customer_name[]" id="">-
                                     @foreach ($order->customer()->get() as $customers)
                                     <option value="{{$customers->id}}">{{$customers->name}}</option>
                                     @endforeach
                                 </select>
                             </td>
+                            <td>{{$order->order_quantity}}</td>
                             @foreach ($foods as $food)
                             <td id="food_row">
-                                         @foreach ($food->menus()->get() as $menus)
-                                         @foreach ($menus->orders()->get() as $orderss)
-                                         <p>{{$orderss->id == $order->id ? $orderss->order_quantity:''}}</p>
-                                         @endforeach
-                                         @endforeach
-                                        </td>
-
-                                      
-                                      
+                                @foreach ($food->menu()->get() as $menus)
+                                    @foreach ($menus->orders()->get() as $orderss)
+                                    <p>{{$orderss->id == $order->id ? $orderss->showquantiy($orderss->order_quantity/$food->div_no):''}}</p>
+                                    @endforeach
+                                @endforeach
+                            </td>
+                               
                             @endforeach
                          
-                        
-                                         
-                                      
-
-                        
                         </tr>
                         <tr id='possition-1'></tr>
                         @endforeach
-                      
                     </tbody>
+                    <tfoot>
+                        <tr>
+                        <td></td>
+                        <td>{{$orders->count()}}</td>
+                        <td>{{$orders->sum('order_quantity')}}</td>
+                        @foreach ($foods as $food)
+                        <th>{{$food->ordercount()}}</th>
+                         @endforeach
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
-        <div class="row clearfix">
-            <div class="col-md-12">
-                <button id="add_row" class="btn btn-default pull-left">Add Row</button>
-                <button id='delete_row' class="pull-right btn btn-default">Delete Row</button>
-            </div>
-        </div>
-        <div class="row clearfix" style="margin-top:20px">
-            <div class="pull-right col-md-4">
-                <table class="table table-bordered table-hover" id="main_table_total">
-                    <tbody>
-                        <tr>
-                            <th class="text-center">Sub Total</th>
-                            <td class="text-center"><input type="number" name='sub_total' placeholder='0.00' class="form-control" id="sub_total" readonly /></td>
-                        </tr>
-                        <tr>
-                            <th class="text-center">Tax</th>
-                            <td class="text-center">
-                                <div class="input-group mb-2 mb-sm-0">
-                                    <input type="number" class="form-control" id="tax" placeholder="0">
-                                    <div class="input-group-addon">%</div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="text-center">Tax Amount</th>
-                            <td class="text-center"><input type="number" name='tax_amount' id="tax_amount" placeholder='0.00' class="form-control" readonly /></td>
-                        </tr>
-                        <tr>
-                            <th class="text-center">Grand Total</th>
-                            <td class="text-center"><input type="number" name='total_amount' id="total_amount" placeholder='0.00' class="form-control" readonly /></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button id="call_ajax_btn">Call ajax</button>
-            </div>
-        </div>
+   
     </div>
 <!-- new html code here end -->
 
@@ -163,7 +101,7 @@
                }
                total=price*quantity;
                $("input[name='total']").val(total);
-
+            
             });
            
             $("#food_menu").on('change',function(e){
@@ -171,7 +109,7 @@
                  
               
             });
-
+            
             $("#order_ok").click(function(){
                 var name= $("input[name='name']").val();
             var price= $("input[name='price']").val();
