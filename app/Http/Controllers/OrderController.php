@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Models\FoodMenu;
+use App\Models\FoodMenuFinal;
+
+use function PHPSTORM_META\map;
 
 class OrderController extends Controller
 {
@@ -241,20 +245,104 @@ class OrderController extends Controller
         $orders = Order::all();
         return view('showcompanynamewithitem', compact('orders'));
     }
-
+    
     public function quickorder()
     {
+        
         $customers = Customer::all();
         $menus = Menu::all();
          $last_order = Order::latest()->first();
-        return view('quickorder', compact('customers','menus', 'last_order'));
+         $food = Food::all();
+         $finalmenu = FoodMenuFinal::all();
+        
+        return view('quickorder', compact('finalmenu','food','customers','menus', 'last_order'));
     }
+    
+    function orderquantity(Request $request){
+        
+         $quantity = $request->quantity;
+         $qd = $quantity / 10;
+        
+         //div
+         if(floor($qd) != $qd){
+            $arr = explode('.', number_format($qd, 1));
+        }else{
+            $arr = explode('.', $qd);
+        }
+        if ($qd > 1) {
+            if(count($arr)>1){
+            $add = $arr[0]+1;
+            $qd = $arr[1] <= 5 ? '<span class="full">'. $arr[0] . ' Full </span> <br> <span class="half">1 half </span>' : $add . ' Full'; 
+            }else{
+                $qd= $arr[0] . ' Full';
+            }   
+        }else{
+              $qd= $qd <= 5 ? 'half' : 'full';
+        }
+         //div
+                 
+        $food = FoodMenuFinal::pluck('amount');
+        
+        $test = $food->map(function($f) use ($quantity){
+            return ceil($f*$quantity);
+        });
+        
+        $t = [];
+         $food = FoodMenuFinal::all();
+        
+        foreach($food as $f){
+            array_push($t, $f->foods->name);
+        }
+        
+        return response()->json(['test'=>$test, 'food'=>$t, 'qd'=>$qd]);
+    }
+    
+    function countquantity(Request $request){
+        $array = $request->quantity;
 
+        $arraymap = array_map(function($a){
+            return $a/10;
+        }, $array);
+        
+        $half=0;
+        $full=[];
+        //return count($arr);
+        //$qd= /10;
+        foreach($arraymap as $ar){
+            if(floor($ar) != $ar){
+                $arr = explode('.', number_format($ar, 1));
+            }else{
+                $arr = explode('.', $ar);
+            }
+            if ($ar > 1) {
+                if(count($arr)>1){
+                if($arr[1]>5){
+                    $add = $arr[0]+1;
+                }else{
+                    $add = $arr[0];
+                }
+                $qd = $arr[1] <= 5 ? $half++ : '';
+                array_push($full, $add);
+            }else{;
+                array_push($full, $arr[0]);
+            }   
+        }else{
+            $add= $arr[0]+1;
+            $arr[1] <= 5 ? $half++ : array_push($full, $add);
+            //$qd= $qd <= 5 ? 'half' : 'full';
+        }
+    }
+    //return $full;
+    return array_sum($full) . ' full ' . $half .'half';
+         //div
+        // return response()->json(['full'=>array_sum($full), 'food'=>$t, 'qd'=>$qd]);
+        
+    }
 
     public function saveorder(Request $request)
     {
         $cusid = $request->only('customer_id');
-
+        
         $arr1 = $request->customer_id;
         $arr2 = $request->quantity;
         

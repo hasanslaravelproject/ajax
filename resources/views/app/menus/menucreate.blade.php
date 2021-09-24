@@ -1,26 +1,27 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">
-                <a href="{{ route('menus.index') }}" class="mr-4"
-                    ><i class="icon ion-md-arrow-back"></i
-                ></a>
-                @lang('crud.menus.create_title')
-            </h4>
-            
-            <x-form
-                method="POST"
-                action="{{ route('menus.store') }}"
-                has-files
-                class="mt-4"
-            >
-                <!-- @include('app.menus.form-inputs') -->
-                
-                <!-- new html code here start -->
-<div class="container">
+    
+    <form action="{{route('menus.storedata')}}" method="POST">
+    @csrf
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <label for="menuid">Menu Id</label>
+                <input type="text" name="menuid" value="{{!empty($menuid->id) ? $menuid->menuid + 1 : 1}}" disabled>
+            </div>
+            <div class="col-lg-6">
+                <label for="menustatus">Menu Status</label>
+                <a href="">Active</a>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+            <div class="container">
         <div class="row clearfix">
             <div class="col-md-12">
                
@@ -28,8 +29,11 @@
                     <thead>
                         <tr>
                             <th class="text-center"> # </th>
-                            <th class="text-center"> Select Food </th>
-                            <th class="text-center"> Select Qantity </th>
+                            <th class="text-center">Item </th>
+                            <th class="text-center"> Amount </th>
+                            <th class="text-center"> Measured Unit </th>
+                            <th class="text-center"> Number of Person </th>
+                            <th class="text-center"> Per Person Amount </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,56 +44,80 @@
                                 <option value="{{ $value }}" >{{ $label }}</option>
                              @endforeach
                             </select></td>
-                            <td><input type="number" name='quantity[]' placeholder='0.00' class="form-control quantity" /></td>
-                            <td class="add_menu">Add Menu</td>
+                            <td><input type="text" onkeyup="test(this)" name='quantity[]' placeholder='0.00' class="form-control quantity" /></td>
+                            
+                            <td>
+                                <select name="measured_unit[]" id="" class="form-control">
+                                @foreach ($measureunit as $unit)
+                                <option value="{{$unit->name}}">{{$unit->name}}</option>
+                                @endforeach
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" onkeyup="person(this)" name="person_number[]" class="form-control">
+                            </td>
+                            <td>
+                                <input type="text" name="per_person_amount[]" class="form-control pa">
+                            </td>
+                            
                             <td><button class="add_menu">Add New row</button></td>
                             <td><button class="delete_menu">Delete row</button></td>
                             
                         </tr>
                         <tr id='possition-1'></tr>
+
+                        
                     </tbody>
                 </table>
+
+                <button type="submit">Submit</button>
             </div>
         </div>
-        <div class="row clearfix">
-            <div class="col-md-12">
-                <button id="add_row" class="btn btn-default pull-left" type="button">Add Row</button>
-                <button id='delete_row' class="pull-right btn btn-default"  type="button">Delete Row</button>
-            </div>
-        </div>
+     
        
     </div>
-<!-- new html code here end -->
-                
-                <div class="mt-4">
-                    <a href="{{ route('menus.index') }}" class="btn btn-light">
-                        <i class="icon ion-md-return-left text-primary"></i>
-                        @lang('crud.common.back')
-                    </a>
-
-                    <button type="submit" class="btn btn-primary float-right" id="menu_ok"> 
-                        <i class="icon ion-md-save"></i>
-                        @lang('crud.common.create')
-                    </button>
-                    
-                </div>
-            </x-form>
+            </div>
         </div>
     </div>
-</div>
-<script>
+</form>
+    <script>
+        let amount;
+        let persons;
+        let total;
+        
+        function calculate(){
+           /*  total = Math.ceil(amount/persons);
+            if(total == Infinity || total == 'NaN'){
+                total = 0;
+            } */
+            total = amount/persons;
+            
+            
+        }
+        
+        function test($this){
+            amount = ($this.value);
+            calculate()
+            console.log($($this).closest('td').next('td').next('td').next('td').find('input').val(total));
+        }
+        
+        function person($this){
+           persons = $this.value;
+           calculate()
+           console.log($($this).closest('td').next('td').find('input').val(total) );
+        }
      $(document).ready(function() {
-                      
-         
          var new_possition = 1;
             $(document).on('click', '.add_menu' ,function(e){
                 e.preventDefault();
+                amount = 0;
+                persons = 0;
                 back_possition = new_possition - 1;
                 $('#possition-' + new_possition).html($('#possition-' + 0).html()).find('td:first-child').html(new_possition + 1);
                 $('#main_table').append('<tr id="possition-' + (new_possition + 1) + '"></tr>');
                 new_possition++;
             });
-
+            
             $("#delete_row").click(function() {
                 if (new_possition > 1) {
                     $("#possition-" + (new_possition - 1)).html('');
@@ -148,8 +176,11 @@
                 }); 
              }
             });
-
-
+        
+        
         });
+        
+        
+      
 </script>
 @endsection

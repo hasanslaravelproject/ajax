@@ -170,6 +170,8 @@ Route::prefix('/')
         
         Route::get('/quickorder', [OrderController::class, 'quickorder']);
         Route::post('/quickorder', [OrderController::class, 'saveorder'])->name('saveorder');
+        Route::post('/orderquantity', [OrderController::class, 'orderquantity'])->name('orderquantity');
+        Route::post('/countquantity', [OrderController::class, 'countquantity'])->name('countquantity');
         
         Route::get('orders', [OrderController::class, 'index'])->name(
             'orders.index'
@@ -225,6 +227,9 @@ Route::prefix('/')
         );
         Route::get('menus/create', [MenuController::class, 'create'])->name(
             'menus.create'
+        );
+        Route::post('menus/store', [MenuController::class, 'storedata'])->name(
+            'menus.storedata'
         );
         Route::get('menus/{menu}', [MenuController::class, 'show'])->name(
             'menus.show'

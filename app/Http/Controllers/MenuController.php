@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
 use App\Models\Food;
+use App\Models\Menu;
+use App\Models\Order;
 use App\Models\Company;
+use App\Models\FoodMenu;
 use App\Models\MealType;
 use App\Models\MenuTypes;
-use App\Models\FoodMenu;
+use App\Models\measureUnit;
 use Illuminate\Http\Request;
+use App\Models\FoodMenuFinal;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\MenuStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\MenuUpdateRequest;
-use Illuminate\Support\Facades\DB;
-
+use PhpParser\Node\Stmt\Finally_;
 
 class MenuController extends Controller
 {
@@ -41,16 +44,36 @@ class MenuController extends Controller
     public function create(Request $request)
     {
         $this->authorize('create', Menu::class);
-
+        
         $allMenuTypes = MenuTypes::pluck('name', 'id');
         $mealTypes = MealType::pluck('name', 'id');
         $foods = Food::pluck('name', 'id');
         $companies = Company::pluck('name', 'id');
-        
+        $measureunit = measureUnit::all();
+        $menuid = FoodMenuFinal::orderBy('id', 'desc')->first();
         return view(
-            'app.menus.create',
-            compact('allMenuTypes', 'mealTypes', 'foods', 'companies')
+            'app.menus.menucreate',
+            compact('allMenuTypes', 'mealTypes', 'foods', 'companies', 'measureunit','menuid')
         );
+    }
+
+    public function storedata(Request $request){
+        $food = $request->food_new;
+        $amount = $request->per_person_amount;
+        $menuid = $request->menuid;
+
+        //return gettype($amount);
+        $food_amount = array_combine($food, $amount);
+
+        foreach($food_amount as $food=>$amount){
+            FoodMenuFinal::create([
+                'menuid'=>$menuid,
+                'food'=> $food,
+                'amount'=>$amount
+            ]);
+        }
+        
+        return back();
     }
 
     /**
